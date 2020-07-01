@@ -1,10 +1,10 @@
 use std::process;
 
-use optagentnet::Config;
+use optagentnet::config::Config;
 
 fn main() {
 
-    // Load configuration and exit if file not found
+    // Load configuration, exit if file not found and show config struct contents
     let cfgfilename = String::from("oan.cfg"); 
     let config = Config::from_file(&cfgfilename)
         .unwrap_or_else(|err|{
@@ -12,7 +12,7 @@ fn main() {
             process::exit(1);
         });
 
-    println!("{}",config);
+    println!("Loaded configuration : {}",config);
 
 
 }
