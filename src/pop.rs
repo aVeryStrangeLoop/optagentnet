@@ -12,7 +12,7 @@ impl Population{
         let mut pop = Vec::new();
 
         for _ in 0..cfg.gpop_size{
-            pop.push(Grid::new(cfg));
+            pop.push(Grid::new_rand(cfg));
         }
         Ok(Population{grids: pop})
     }

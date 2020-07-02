@@ -21,7 +21,5 @@ fn main() {
             process::exit(1);
         });
 
-    // Calculate SW of each grid in the population
-
 
 }
