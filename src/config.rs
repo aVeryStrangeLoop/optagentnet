@@ -2,7 +2,7 @@ use std::fs;
 use std::error::Error;
 use std::fmt;
 
-// CONFIGURATION
+// CONFIGURATION INITIALISATION
 pub struct Config {
     // Structural and environmental parameters
     pub grid_size : u32, // Grid size
