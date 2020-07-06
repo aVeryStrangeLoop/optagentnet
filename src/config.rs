@@ -28,6 +28,8 @@ pub struct Config {
     pub max_gen   : u32, // Total number of gens to run for
     pub sv_every  : u32, // Save every how many gens
 
+    // Multithreading (Rayon)
+    pub threads : u32,
 }
 
 impl Config{
@@ -55,6 +57,7 @@ impl Config{
                 "tti_beta"  => {config.tti_beta  = as_vec[1].parse::<f64>().unwrap()},
                 "max_gen"   => {config.max_gen   = as_vec[1].parse::<u32>().unwrap()},
                 "sv_every"  => {config.sv_every  = as_vec[1].parse::<u32>().unwrap()},
+                "threads" => {config.threads = as_vec[1].parse::<u32>().unwrap()},
                 _=>{},
             }
         }
@@ -76,7 +79,8 @@ impl Default for Config{
             tti_alpha: 0.0,
             tti_beta: 0.0,
             max_gen: 0,
-            sv_every: 0
+            sv_every: 0,
+            threads: 0
         }
     }
 }

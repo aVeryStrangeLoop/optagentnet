@@ -1,6 +1,7 @@
 use crate::config::Config;
 use crate::agent::Agent;
 use std::fmt;
+use rayon::prelude::*;
 
 // RULE 0 : Never let anything above this API handle x,y coordinates
 pub struct Grid{
@@ -30,54 +31,55 @@ impl Grid{
         // 6(x-1)  ______  2(x+1)
         // 5       4(y-1)  3
         
-        let x = agent.position.0;
-        let y = agent.position.1;
+        let (x,y) = agent.get_pos();
 
         // 0
         neighbors.push(&self.agents[self.xy_to_idx(if y+1<self.size {(x,y+1)} else {(x,0)}) as usize]); 
         
         // 1 
-        neighbors.push(&self.agents[self.xy_to_idx(if (x+1<self.size && y+1<self.size) {(x+1,y+1)}
-                                                   else if (x+1<self.size && y+1>=self.size) {(x+1,0)}
-                                                   else if (x+1>=self.size && y+1<self.size) {(0,y+1)}
+        neighbors.push(&self.agents[self.xy_to_idx(if x+1<self.size && y+1<self.size {(x+1,y+1)}
+                                                   else if x+1<self.size && y+1>=self.size {(x+1,0)}
+                                                   else if x+1>=self.size && y+1<self.size {(0,y+1)}
                                                    else {(0,0)}) as usize]);
 
         // 2
         neighbors.push(&self.agents[self.xy_to_idx(if x+1<self.size {(x+1,y)} else {(0,y)}) as usize]);
 
         // 3
-        neighbors.push(&self.agents[self.xy_to_idx(if (x+1<self.size && y>0) {(x+1,y-1)}
-                                                   else if (x+1<self.size && y<=0) {(x+1,self.size-1)}
-                                                   else if (x+1>=self.size && y>0) {(0,y-1)}
+        neighbors.push(&self.agents[self.xy_to_idx(if x+1<self.size && y>0 {(x+1,y-1)}
+                                                   else if x+1<self.size && y<=0 {(x+1,self.size-1)}
+                                                   else if x+1>=self.size && y>0 {(0,y-1)}
                                                    else {(0,self.size-1)}) as usize]);
         
         // 4
         neighbors.push(&self.agents[self.xy_to_idx(if y>0 {(x,y-1)} else {(x,self.size-1)}) as usize]);
         
         // 5
-        neighbors.push(&self.agents[self.xy_to_idx(if (x>0 && y>0) {(x-1,y-1)}
-                                                   else if (x<=0 && y>0) {(self.size-1,y-1)}
-                                                   else if (x>0 && y<=0) {(x-1,self.size-1)}
+        neighbors.push(&self.agents[self.xy_to_idx(if x>0 && y>0 {(x-1,y-1)}
+                                                   else if x<=0 && y>0 {(self.size-1,y-1)}
+                                                   else if x>0 && y<=0 {(x-1,self.size-1)}
                                                    else {(self.size-1,self.size-1)}) as usize]);
 
         // 6 
         neighbors.push(&self.agents[self.xy_to_idx(if x>0 {(x-1,y)} else {(self.size-1,y)}) as usize]);   
         
         // 7
-        neighbors.push(&self.agents[self.xy_to_idx(if (x>0 &&  y+1<self.size) {(x-1,y+1)}
-                                                   else if (x<=0 && y+1<self.size) {(self.size-1,y+1)}
-                                                   else if (x>0 && y+1>=self.size) {(x-1,0)}
+        neighbors.push(&self.agents[self.xy_to_idx(if x>0 &&  y+1<self.size {(x-1,y+1)}
+                                                   else if x<=0 && y+1<self.size {(self.size-1,y+1)}
+                                                   else if x>0 && y+1>=self.size {(x-1,0)}
                                                    else {(self.size-1,0)}) as usize]);
 
 
         neighbors
     }
 
-    fn idx_to_xy(&self, idx: u32) -> (u32,u32) {
-        // Convert vector index to xy position
-        let x = idx % self.size;
-        let y = idx / self.size; 
-        (x,y)
+    pub fn get_sw(&self) -> f64 {
+        self.agents.iter().map(|agent| agent.get_util()).sum()
+    }
+        
+    // Multithread implementation of get_sw. Each agent gets a thread
+    pub fn get_sw_mt(&self) -> f64{
+        self.agents.par_iter().map(|agent| agent.get_util()).sum()
     }
 
 

@@ -2,6 +2,7 @@ use crate::config::Config;
 use crate::grid::Grid;
 use std::error::Error;
 use std::fmt;
+use rayon::prelude::*;
 
 pub struct Population{
     pub grids : Vec<Grid>
@@ -15,6 +16,14 @@ impl Population{
             pop.push(Grid::new_rand(cfg));
         }
         Ok(Population{grids: pop})
+    }
+
+    pub fn get_sw(&self) -> Vec<f64> { // Serial
+        self.grids.iter().map(|grid| grid.get_sw()).collect()
+    }
+
+    pub fn get_sw_mt(&self) -> Vec<f64> { // Each grid gets a thread
+        self.grids.par_iter().map(|grid| grid.get_sw()).collect() // Change get_sw to get_sw_mt for each agent to get a thread. Not recommended unles resvec -> utility is an expensive calculation.
     }
 }
 
