@@ -3,11 +3,11 @@ use crate::grid::Grid;
 use crate::config::Config;
 use rand::Rng;
 use std::process;
+use std::time::Instant;
 
 pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
-    // Execute pop genomes to 
-    pop.execute_genomes_mt(&cfg);
-    
+    // Execute pop genomes to
+    pop.execute_genomes_mt(&cfg);    
     // Get Population and sw vector sorted
     let mut sw = pop.get_sw_mt();
     pop.sort_rev_by(); // sort population by sw (and reverse)
@@ -15,6 +15,7 @@ pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
     sw.reverse();
     // Normalise sw vector to get as probabilities
     sw = normalise(sw);
+
     
 
     // Create the new population to return and add the two fittest grids to it
@@ -27,22 +28,25 @@ pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
     new_pop.push(pop.get_grid_at(1)); // Get clone second best grid
 
     for _ in (2..cfg.gpop_size).step_by(2) {
+        // MOST EXPENSIVE 1 (TODO)
         let mut g1 = pop.get_grid_at(idx_from_prob_dist(&sw)); // Get cloned
         let mut g2 = pop.get_grid_at(idx_from_prob_dist(&sw)); // Get cloned
-
-    // with gcrs_prob, crossover
+        // with gcrs_prob, crossover
         if true_with_prob(cfg.gcrs_prob){
             let new_grids = crossover(g1,g2);
             g1 = new_grids.0;
             g2 = new_grids.1;
         }
-
+        
+        // MOST EXPENSIVE 2 (TODO)
         // Mutate in place
         g1.mutate(&cfg);
         g2.mutate(&cfg);
         new_pop.push(g1);
         new_pop.push(g2);
     } 
+
+
     return new_pop
 }
 

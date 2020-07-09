@@ -140,6 +140,12 @@ impl Grid{
         self.agents[idx].set_genome(genome);
     }
 
+    pub fn seq_as_csv(&self) -> String {
+        let mut grid_csv = String::from("");
+        self.agents.iter().for_each(|agent| grid_csv.push_str(&format!("{:?}\n",agent)));
+        grid_csv
+    }
+
 }
 
 impl fmt::Debug for Grid{
