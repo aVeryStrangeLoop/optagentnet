@@ -3,7 +3,6 @@ use crate::grid::Grid;
 use crate::config::Config;
 use rand::Rng;
 use std::process;
-use std::time::Instant;
 
 pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
     // Execute pop genomes to

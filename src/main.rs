@@ -44,6 +44,7 @@ fn main() {
     let start= Instant::now();
     // RUN GENETIC ALGROITHM
     for gen in 0..cfg.max_gen{
+        println!("Generation : {} out of {}",gen,cfg.max_gen);
         cur_pop = ga_step(cur_pop,&cfg);
         if gen%cfg.sv_every==0{
             save(&gen,&cur_pop,&summary);
