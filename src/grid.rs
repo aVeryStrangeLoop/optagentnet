@@ -1,12 +1,14 @@
 use crate::config::Config;
 use crate::agent::Agent;
 use std::fmt;
-use rayon::prelude::*;
+//use rayon::prelude::*;
 
 // RULE 0 : Never let anything above this API handle x,y coordinates
+#[derive(Clone)]
 pub struct Grid{
     pub agents : Vec<Agent>,
     pub size : u32, // size in each dimension
+    pub sw : f64,
 }
 
 impl Grid{
@@ -17,11 +19,11 @@ impl Grid{
             let coords : (u32,u32) = (idx%cfg.grid_size,idx/cfg.grid_size);
             grid.push(Agent::new_rand(cfg,coords));
         }
-        Grid{agents: grid,size:size}
+        Grid{agents: grid,size:size,sw:0.0}
     }
  
     
-    pub fn get_neighbors(&self, agent: &Agent) -> Vec<&Agent> {
+    fn get_neighbors(&self, agent: &Agent) -> Vec<&Agent> {
         // Get agents around a particular agent (as references)
         let mut neighbors = Vec::new();
 
@@ -73,14 +75,55 @@ impl Grid{
         neighbors
     }
 
-    pub fn get_sw(&self) -> f64 {
-        self.agents.iter().map(|agent| agent.get_util()).sum()
+    fn get_received_res(&self,agent: &Agent) -> Vec<f64>{
+        let mut received = Vec::new();
+        let neighbors = self.get_neighbors(agent);
+        for neighbor in neighbors.iter() {
+            // if received is empty, set it from the first neighbor
+            if received.len()==0{
+                received = neighbor.get_donated(); 
+            } else{
+                let donated_to_me = neighbor.get_donated();
+                for idx in 0..received.len(){
+                    received[idx] += donated_to_me[idx];
+                }
+            }
+        }
+        received
+    }
+
+    pub fn get_cached_sw(&self) -> f64 {
+        self.sw
+    }
+
+
+    pub fn calculate_and_get_sw(&mut self) -> f64 {
+        self.sw = self.agents.iter().map(|agent| agent.get_util()).sum();
+        self.sw
     }
         
-    // Multithread implementation of get_sw. Each agent gets a thread
-    pub fn get_sw_mt(&self) -> f64{
-        self.agents.par_iter().map(|agent| agent.get_util()).sum()
+    pub fn execute_genomes(&mut self,cfg: &Config) {
+        self.agents.iter_mut().for_each(|agent| agent.execute_genome(cfg));
+        for idx in 0..self.agents.len(){
+            let received = self.get_received_res(&self.agents[idx]);
+            self.agents[idx].add_resource(received);
+        }
     }
+
+    pub fn mutate(&mut self, cfg: &Config) {
+       self.agents.iter_mut().for_each(|agent| agent.mutate(cfg)); 
+    }
+   
+    // UNCOMMENT TO ENABLE GRID LEVEL MULTITHREADING (Not recommended except for complicated utility functions) 
+    // Multithread implementation of get_sw. Each agent gets a thread
+    // pub fn get_sw_mt(&self) -> f64{
+    //    self.agents.par_iter().map(|agent| agent.get_util()).sum()
+    // }
+
+    // pub fn execute_genomes_mt(&mut self, cfg: &Config) {
+    //    self.agents.par_iter_mut().for_each(|agent| agent.execute_genome(cfg));
+    //    // DO DONATIONS HERE !!
+    // }
 
 
     fn xy_to_idx(&self, xy: (u32,u32)) -> u32 {
@@ -88,6 +131,15 @@ impl Grid{
         let idx = xy.1 * self.size + xy.0;
         idx
     }
+
+    pub fn get_agent_genome_at(&self,idx: usize) -> Vec<i32> {
+        self.agents[idx].get_genome()
+    }
+
+    pub fn set_agent_genome_at(&mut self, idx: usize, genome:Vec<i32>){
+        self.agents[idx].set_genome(genome);
+    }
+
 }
 
 impl fmt::Debug for Grid{
