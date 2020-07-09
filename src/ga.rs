@@ -8,7 +8,7 @@ pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
     // Execute pop genomes to
     pop.execute_genomes_mt(&cfg);    
     // Get Population and sw vector sorted
-    let mut sw = pop.get_sw_mt();
+    let mut sw = pop.get_sw_mt(cfg);
     pop.sort_rev_by(); // sort population by sw (and reverse)
     sw.sort_by(|a,b| a.partial_cmp(b).unwrap());
     sw.reverse();
@@ -27,7 +27,6 @@ pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
     new_pop.push(pop.get_grid_at(1)); // Get clone second best grid
 
     for _ in (2..cfg.gpop_size).step_by(2) {
-        // MOST EXPENSIVE 1 (TODO)
         let mut g1 = pop.get_grid_at(idx_from_prob_dist(&sw)); // Get cloned
         let mut g2 = pop.get_grid_at(idx_from_prob_dist(&sw)); // Get cloned
         // with gcrs_prob, crossover
@@ -37,7 +36,6 @@ pub fn ga_step(mut pop: Population,cfg: &Config) -> Population {
             g2 = new_grids.1;
         }
         
-        // MOST EXPENSIVE 2 (TODO)
         // Mutate in place
         g1.mutate(&cfg);
         g2.mutate(&cfg);

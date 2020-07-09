@@ -97,8 +97,8 @@ impl Grid{
     }
 
 
-    pub fn calculate_and_get_sw(&mut self) -> f64 {
-        self.sw = self.agents.iter().map(|agent| agent.get_util()).sum();
+    pub fn calculate_and_get_sw(&mut self,cfg: &Config) -> f64 {
+        self.sw = self.agents.iter().map(|agent| agent.get_util(cfg)).sum();
         self.sw
     }
         

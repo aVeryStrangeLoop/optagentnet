@@ -39,16 +39,16 @@ impl Population{
         self.grids.reverse();
     }
 
-    pub fn get_sw(&mut self) -> Vec<f64> { // Serial
-        self.grids.iter_mut().map(|grid| grid.calculate_and_get_sw()).collect()
+    pub fn get_sw(&mut self,cfg:&Config) -> Vec<f64> { // Serial
+        self.grids.iter_mut().map(|grid| grid.calculate_and_get_sw(cfg)).collect()
     }
     
     pub fn execute_genomes(&mut self, cfg: &Config) {
         self.grids.iter_mut().for_each(|grid| grid.execute_genomes(cfg));
     }
 
-    pub fn get_sw_mt(&mut self) -> Vec<f64> { // Each grid gets a thread
-        self.grids.par_iter_mut().map(|grid| grid.calculate_and_get_sw()).collect() // Change get_sw to get_sw_mt for each agent to get a thread. Not recommended unles resvec -> utility is an expensive calculation.
+    pub fn get_sw_mt(&mut self,cfg:&Config) -> Vec<f64> { // Each grid gets a thread
+        self.grids.par_iter_mut().map(|grid| grid.calculate_and_get_sw(cfg)).collect() // Change get_sw to get_sw_mt for each agent to get a thread. Not recommended unles resvec -> utility is an expensive calculation.
     }
 
     pub fn execute_genomes_mt(&mut self, cfg: &Config) { // Each grid gets a thread

@@ -33,8 +33,8 @@ impl Agent{
         self.position
     }
 
-    pub fn get_util(&self) -> f64 {
-        utility_function(&self.res)
+    pub fn get_util(&self,cfg:&Config) -> f64 {
+        utility_function(&self.res,cfg)
     }
 
     pub fn execute_genome(&mut self,cfg: &Config) {
