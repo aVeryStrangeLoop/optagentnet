@@ -1,5 +1,14 @@
+# OptAgentNet
+(Agent Network Optimizer)
 
-Forgettable things:
-1. the Population::get_sw() function and get_sw_mt() functions are equivalent except mt allows multithreading. For large populations its generally a good idea to use mt.
-2. the Grid::get_sw() function and get_sw_mt() functions are equivalent except mt allows multithreading. It is not recommended to use mt unless the resvec -> utility function is time consuming.
-3. MULTITHREADING IS NOT ALWAYS FASTER. 8-10 threads work best (from what I've played with till now). 
+OptAgentNet is a program that simulates a decentralised network of computational agents on a 2-Dimensional grid. These agents can perform tasks in context of an environmental "utility function" to generate fitness for the entire network. A genetic algorithm optimizes this network to find the optimal state given a utility function. These agents are also capable of communicating with each other and sharing the resources they obtain by performing symbolic "tasks".
+
+### Building OptAgentNet
+Building the program requires the rust compiler and the cargo package manager for rust.
+
+For windows systems these can be downloaded from [here](https://www.rust-lang.org/tools/install)
+For linux systems these can be installed with:
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
