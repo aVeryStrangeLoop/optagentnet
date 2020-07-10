@@ -18,10 +18,17 @@ impl Agent{
         let mut donate = Vec::new();
 
         let mut rng = rand::thread_rng();
-
-        for _ in 0..cfg.comp_cap{
-            genome.push(rng.gen_range(1-(cfg.num_tasks as i32),cfg.num_tasks as i32)); 
+        if cfg.donate_allowed{
+            for _ in 0..cfg.comp_cap{
+                genome.push(rng.gen_range(1-(cfg.num_tasks as i32),cfg.num_tasks as i32));
+            }
+        } else { 
+            for _ in 0..cfg.comp_cap{
+                genome.push(rng.gen_range(0 as i32,cfg.num_tasks as i32));
+            }
         }
+         
+        
         for _ in 0..cfg.num_tasks{
             res.push(0.0);
             donate.push(0.0);
@@ -63,9 +70,16 @@ impl Agent{
 
     pub fn mutate(&mut self,cfg:&Config){
         let mut rng = rand::thread_rng();
-        for idx in 0..self.genome.len(){
-            let rn : f64 = rng.gen();
-            if rn < cfg.gmut_prob { self.genome[idx] = rng.gen_range(1-(cfg.num_tasks as i32),cfg.num_tasks as i32) }
+        if cfg.donate_allowed{
+            for idx in 0..self.genome.len(){
+                let rn : f64 = rng.gen();
+                if rn < cfg.gmut_prob { self.genome[idx] = rng.gen_range(1-(cfg.num_tasks as i32),cfg.num_tasks as i32) } 
+            }
+        } else { 
+            for idx in 0..self.genome.len(){
+                let rn : f64 = rng.gen();
+                if rn < cfg.gmut_prob { self.genome[idx] = rng.gen_range(0 as i32,cfg.num_tasks as i32) } 
+            }
         }
     }
 

@@ -30,6 +30,9 @@ pub struct Config {
 
     // Multithreading (Rayon)
     pub threads : u32,
+
+    // Donation allowed? (1=true, 0=false)
+    pub donate_allowed: bool,
 }
 
 impl Config{
@@ -58,6 +61,7 @@ impl Config{
                 "max_gen"   => {config.max_gen   = as_vec[1].parse::<u32>().unwrap()},
                 "sv_every"  => {config.sv_every  = as_vec[1].parse::<u32>().unwrap()},
                 "threads" => {config.threads = as_vec[1].parse::<u32>().unwrap()},
+                "donate_allowed" => {config.donate_allowed = as_vec[1].parse::<bool>().unwrap()},    
                 _=>{},
             }
         }
@@ -80,14 +84,15 @@ impl Default for Config{
             tti_beta: 0.0,
             max_gen: 0,
             sv_every: 0,
-            threads: 0
+            threads: 0,
+            donate_allowed:true
         }
     }
 }
 
 impl fmt::Display for Config{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f,"{},{},{},{},{},{},{},{},{},{},{},{}",
+        write!(f,"{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
             self.grid_size,
             self.num_tasks,
             self.comp_cap,
@@ -99,7 +104,9 @@ impl fmt::Display for Config{
             self.tti_alpha,
             self.tti_beta,
             self.max_gen,
-            self.sv_every)
+            self.sv_every,
+            self.threads,
+            self.donate_allowed)
     }
 }
 
