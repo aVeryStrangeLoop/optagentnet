@@ -43,7 +43,7 @@ fn main() {
     
 
     // RUN GENETIC ALGROITHM
-    for gen in 0..cfg.max_gen{
+    for gen in 0..(cfg.max_gen+1){
         println!("Generation : {} out of {}",gen,cfg.max_gen);
         cur_pop = ga_step(cur_pop,&cfg);
         if gen%cfg.sv_every==0{
