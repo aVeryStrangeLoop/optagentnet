@@ -10,6 +10,8 @@ use std::fs;
 
 fn main() {
     
+    let start_time= Instant::now();
+
     // INITIALIZE CONFIGURATION
     let cfgfilename = String::from("oan.cfg"); 
     let cfg = Config::from_file(&cfgfilename)
@@ -17,7 +19,6 @@ fn main() {
             println!("Problem opening config file {} : {}",&cfgfilename,err);
             process::exit(1);
         });
-
 
 
     // THREADING (USING RAYON) 
@@ -41,7 +42,6 @@ fn main() {
 
     
 
-    let start= Instant::now();
     // RUN GENETIC ALGROITHM
     for gen in 0..cfg.max_gen{
         println!("Generation : {} out of {}",gen,cfg.max_gen);
@@ -50,10 +50,9 @@ fn main() {
             save(&gen,&cur_pop,&summary);
         }  
     }
-    let t1 = start.elapsed();
 
     // BRING THIS DOWN TO 5-10 minutes !!!
-    println!("Time for 100k generations {:?} mins",(t1.as_secs()*(1000 as u64) / (60 as u64)));
+    println!("Completed run! ({:?})",start_time.elapsed());
 }
 
 pub fn save(gen: &u32,pop: &Population,mut sfile: &File) {
