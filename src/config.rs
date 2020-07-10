@@ -12,7 +12,7 @@ pub struct Config {
     // UF and agent parameters
     pub exp_eff   : f64, // Export efficacy
     pub uf_param1 : f64, // Compounding coefficient
-    
+    pub uf_number : u32, // Which uf to use? (see uf.rs)     
 
     // GA paramters
     pub gpop_size  : u32,// GA Population size
@@ -53,6 +53,7 @@ impl Config{
                 "comp_cap"  => {config.comp_cap  = as_vec[1].parse::<u32>().unwrap()},
                 "exp_eff"   => {config.exp_eff   = as_vec[1].parse::<f64>().unwrap()},
                 "uf_param1" => {config.uf_param1 = as_vec[1].parse::<f64>().unwrap()},
+                "uf_number" => {config.uf_number = as_vec[1].parse::<u32>().unwrap()},
                 "gpop_size" => {config.gpop_size = as_vec[1].parse::<u32>().unwrap()},
                 "gmut_prob" => {config.gmut_prob = as_vec[1].parse::<f64>().unwrap()},
                 "gcrs_prob" => {config.gcrs_prob = as_vec[1].parse::<f64>().unwrap()},
@@ -77,6 +78,7 @@ impl Default for Config{
             comp_cap: 0,
             exp_eff: 0.0,
             uf_param1: 0.0,
+            uf_number: 0,
             gpop_size: 0,
             gmut_prob: 0.0,
             gcrs_prob: 0.0,
@@ -92,12 +94,13 @@ impl Default for Config{
 
 impl fmt::Display for Config{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f,"{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+        write!(f,"{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
             self.grid_size,
             self.num_tasks,
             self.comp_cap,
             self.exp_eff,
             self.uf_param1,
+            self.uf_number,
             self.gpop_size,
             self.gmut_prob,
             self.gcrs_prob,
